@@ -1,0 +1,24 @@
+clear all
+clc
+%%%%%%%%%%% Input the data to matlab%%%%%%%%%%%%%%%%%%%%%
+input=dlmread('xy160.txt'); % the x y place of each dispplacement in y direction, each of them are a vector
+ok1=dlmread('ok160.txt'); % the displacement in y direction in undamaged plate
+no=dlmread('no160.txt'); % the displacemnet in y direction in damaged plate 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% interpolate and mesh %%%%%%%%%%%%%%%%%%%%%%%
+ int2=scatteredInterpolant(input(:,2),input(:,3),no(:,2));
+ int1=scatteredInterpolant(input(:,2),input(:,3),ok1(:,2));
+ ti = 0:1:400;
+[qx1,qy1] = meshgrid(ti,ti);
+[qx2,qy2]=  meshgrid(ti,ti);
+qz1 =int1(qx1,qy1); % find the matrix of undamaged plate
+qz2 =int2(qx2,qy2); % find the matrix of damaged plate
+[cA1,cH1,cV1,cD1]=dwt2(qz1,'haar');
+[cA2,cH2,cV2,cD2]=dwt2(qz2,'haar');  
+ 
+ esalem =abs(cH1)+abs(cV1)+abs(cD1);
+ ekharab=abs(cH2)+abs(cV2)+abs(cD2);
+  Index= sqrt((ekharab).^2+(esalem).^2)/3*(esalem).^2)
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
